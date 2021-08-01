@@ -1,14 +1,126 @@
 <!DOCTYPE html>
-<html lang = "en">
-    <head>
-        <script src = "./src/d3.min.js"></script>
-    </head>
 
-    <body>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!-- Load js -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        body {
+            background-image: url('./picture/background-covid.jpeg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: 100% 140%;
+            background-color: rgba(255, 255, 255, 0.85);
+            background-blend-mode: lighten;
+        }
+
+        h3 {
+            margin-left: 20px;
+        }
+
+        p {
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        nav {
+            font-size: 20px;
+        }
+
+        .navbar-brand {
+            font-size: 20px;
+        }
+
+        div.note {
+            margin-left: 20px;
+            position: absolute;
+            bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation-->
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <!--             <div class="navbar-header">
+                <a class="navbar-brand" href="#">COVID-19 Information</a>
+            </div> -->
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="index.html">Home</a></li>
+                <li><a href="covid-cases-envolving.html">How Are COVID-19 Cases Envolving Across the World?</a></li>
+                <li><a href="covid-cases.html">Daily Confirmed Cases Per Country</a></li>
+                <li><a href="vaccination-status.html">Newly Vaccinated Population Per Country</a></li>
+                <li><a href="scatterplot-cases-to-vaccination.html">Is Vaccine Helping?</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div>
+        <h3>
+            Background
+        </h3>
         <p>
-            Hello World!
+            Coronavirus disease 2019 (COVID-19) is a contagious disease caused by severe acute respiratory syndrome
+            coronavirus 2 (SARS-CoV-2). The first known case was identified in Wuhan, China, in December 2019.The
+            disease has since spread worldwide, leading to an ongoing pandemic. As of July 17th, 2021, nearly 200
+            million COVID-19 cases have be confirmed worldwide, and the virus has claimed more than 4 million lives
+            globally.<br>
+            <br>
+            A COVID‑19 vaccine is a vaccine intended to provide acquired immunity against SARS‑CoV‑2, the virus that
+            causesCOVID‑19. Prior to the COVID‑19 pandemic, an established body of knowledge existed about the structure
+            and function of coronaviruses causing diseases like severe acute respiratory syndrome (SARS) and Middle East
+            respiratory syndrome (MERS). This knowledge accelerated the development of various vaccine technologies
+            during early 2020. The initial focus of SARS-CoV-2 vaccines was on preventing symptomatic, often severe
+            illness. On 10 January 2020, the SARS-CoV-2 genetic sequence data was shared through GISAID, and by 19
+            March, the global pharmaceutical industry announced a major commitment to address COVID-19. The COVID‑19
+            vaccines are widely credited for their role in reducing the spread, severity, and death caused by COVID-19.
         </p>
-        <script>
-        </script>
-    </body>
+        <br>
+        <h3>
+            Content
+        </h3>
+        <p>
+            This website is intended to provide an overall perspective into how COVID-19 gradually spread across
+            different countries/regions in the world and how the vaccination distribution looks like for each
+            country/region. <br>
+            <br>
+            User may use the navigation bar on the top to explore the content in each page. From left to right, 
+            each page covers the correponding content: 
+            <ul>
+                <li>How Are COVID-19 Cases Envolving Across the World?</a></li>
+                <li>Daily Confirmed Cases Per Country</a></li>
+                <li>Newly Vaccinated Population Per Country</a></li>
+                <li>Is Vaccine Helping?</a></li>
+            </ul>
+        </p>
+
+        <div class='note'>
+            <b>Resources</b>:
+            <ul>
+                <li>
+                    <a href="https://en.wikipedia.org/wiki/COVID-19">https://en.wikipedia.org/wiki/COVID-19</a>
+                </li>
+                <li>
+                    <a
+                        href="https://en.wikipedia.org/wiki/COVID-19_vaccine">https://en.wikipedia.org/wiki/COVID-19_vaccine</a>
+                </li>
+                <li>
+                    <a href="https://github.com/nytimes/covid-19-data">https://github.com/nytimes/covid-19-data</a>
+                </li>
+                <li>
+                    <a href="https://github.com/CSSEGISandData/COVID-19">https://github.com/CSSEGISandData/COVID-19</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+</body>
+
 </html>

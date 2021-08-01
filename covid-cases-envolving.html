@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!-- Load js -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <style>
+        body {
+            background-image: url('./picture/background-covid.jpeg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: 100% 140%;
+            background-color: rgba(255, 255, 255, 0.85);
+            background-blend-mode: lighten;
+        }
+
+        nav {
+            font-size: 20px;
+        }
+
+        .navbar-brand {
+            font-size: 20px;
+        }
+
+        h3 {
+            margin-left: 20px;
+        }
+
+        p {
+            margin-left: 20px;
+            margin-right: 20px;
+        }
+
+        path.domain {
+            display: none;
+        }
+
+        text {
+            font: 11px sans-serif;
+            fill: #525252;
+        }
+
+        .date {
+            font-size: 40px;
+            font-weight: 800;
+            opacity: 0.25;
+        }
+
+        .tick line {
+            stroke: #cccccc;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation-->
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <!--             <div class="navbar-header">
+                <a class="navbar-brand" href="#">COVID-19 Information</a>
+            </div> -->
+            <ul class="nav navbar-nav">
+                <li><a href="index.html">Home</a></li>
+                <li class="active"><a href="covid-cases-envolving.html">How Are COVID-19 Cases Envolving Across the World?</a></li>
+                <li><a href="covid-cases.html">Daily Confirmed Cases Per Country</a></li>
+                <li><a href="vaccination-status.html">Newly Vaccinated Population Per Country</a></li>
+                <li><a href="scatterplot-cases-to-vaccination.html">Is Vaccine Helping?</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <h3>
+        Top 20 countries/regions with the most total confirmed COVID-19 cases
+    </h3>
+
+    <p>
+        This dynamic bar chart shows the top 20 countries/regions with the most total confirmed COVID-19 cases as of
+        each day. It started from January 23rd, 2020 till July 17th, 2021. The list of keeps changing as new cases
+        envolve each day. Here are few key points to notice during the
+        entire timeframe:
+    <ul>
+        <li>
+            Before March, the vast majority of the cases were in <b>China</b>, and some of the other countries in
+            <b>Asia</b> also confirmed a few cases.
+        </li>
+        <li>
+            Starting from March, more cases envolved in <b>Europe</b>, especially in <b>Italy</b>, <b>Spain</b> and
+            <b>German</b>.
+        </li>
+        <li>
+            Shortly after, around the Mid March, more and more cases were confirmed in the <b>United States</b>. By 26
+            March it had overtaken China and Italy with the highest number of confirmed cases in the world.
+        </li>
+        <li>
+            In June, <b>Brazil</b> had a surge and beginning from July, <b>India</b> saw an increasing number of cases
+            as well, while the case increase in the <b>United States</b> started to slow down.
+        </li>
+        <li>
+            Since April this year, <b>India</b> has been experiencing a second spike. It now has almost the same number
+            of total confirmed cases as the <b>United States</b> does, followed by <b>Brazil</b>.
+        </li>
+    </ul>
+    </p>
+
+    <!-- Visualization -->
+    <script>
+        var margin = { top: 20, right: 80, bottom: 0, left: 120 },
+            width = 1000,
+            height = 600,
+            gap = 5,
+            num = 20,
+            transit_time = 500;
+
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height);
+
+        // Define continent & assign color
+        var continent = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
+        var color = d3.scaleOrdinal().domain(continent)
+            .range(d3.schemeSet2);
+
+        // Define bar size
+        var size = (height - (margin.bottom + margin.top)) / num - gap;
+
+        // Add legend
+        // Add one square for each continent
+        svg.selectAll("my_legend")
+            .data(continent)
+            .enter()
+            .append("rect")
+            .attr("x", width + gap)
+            .attr("y", function (d, i) { return margin.top + gap + i * (size + gap); })
+            .attr("width", size)
+            .attr("height", size)
+            .style("fill", function (d) { return color(d); });
+
+        // Add label for each continent
+        svg.selectAll("my_continent")
+            .data(continent)
+            .enter()
+            .append("text")
+            .attr("x", width + gap + size * 1.5)
+            .attr("y", function (d, i) { return margin.top + gap + i * (size + gap) + (size / 2) })
+            .text(function (d) { return d })
+            .attr("text-anchor", "left")
+            .style("alignment-baseline", "middle");
+
+        d3.csv('./data/ranking.csv').then(function (data) {
+            // Set date parse
+            var parseDate = d3.timeParse("%m/%d/%y");
+            var formatDate = d3.timeFormat("%b %d, %Y");
+
+            // Load data
+            data.forEach(function (d) {
+                d.date = formatDate(parseDate(d['date']));
+                d.country = d['Country/Region'];
+                d.total_case = +d.confirmed_so_far;
+                d.rank = +d.rank - 1;
+            });
+
+            data = data.filter(function (d) { return d.total_case > 0; })
+            console.log(data);
+
+            // Create list of dates
+            var allDates = d3.set(data.map(function (d) { return d.date; })).values();
+            var dateSize = d3.set(data.map(function (d) { return d.date; })).size();
+
+            // Set beginning date
+            var index = 0;
+            var date = allDates[index];
+
+            // Add date label
+            var date_label = svg.append('text')
+                .attr('class', 'date')
+                .attr('x', width - 130)
+                .attr('y', height - 10)
+                .text(date)
+                .style('text-anchor', 'start');
+
+            // Select data for the date
+            var group = data.filter(function (d) { return d.date == date; })
+                .sort(function (a, b) {
+                    return d3.descending(a.total_case, b.total_case);
+                })
+                .slice(0, num);
+
+            // Add x scale & axis
+            var x_scale = d3.scaleLinear()
+                .domain([0, d3.max(group, function (d) { return d.total_case; })])
+                .range([margin.left, width - margin.right]);
+
+            var x_axis = d3.axisTop()
+                .scale(x_scale)
+                .ticks(5)
+                .tickSize(-(height - margin.top - margin.bottom))
+                .tickFormat(function (d) { return d3.format(',')(d); });
+
+            // Add y scale
+            var y_scale = d3.scaleLinear()
+                .domain([num, 0])
+                .range([height - margin.bottom, margin.top]);
+
+            // Add elements to svg
+            svg.append('g')
+                .call(x_axis)
+                .attr('transform', `translate(0, ${margin.top})`)
+                .attr('class', 'axis x_axis')
+                .selectAll('.tick line');
+
+            svg.selectAll('my_rect')
+                .data(group, function (d) { return d.country; })
+                .enter()
+                .append('rect')
+                .attr('class', 'bar')
+                .attr('x', x_scale(0) + 1)
+                .attr('y', function (d) { return y_scale(d.rank) + gap; })
+                .attr('width', function (d) { return x_scale(d.total_case) - x_scale(0); })
+                .attr('height', size)
+                .style('fill', function (d) { return color(d.Continent); });
+
+            svg.selectAll('my_country')
+                .data(group, function (d) { return d.country; })
+                .enter()
+                .append('text')
+                .attr('class', 'country')
+                .attr('x', margin.left - 5)
+                .attr('y', function (d) { return y_scale(d.rank) + gap + ((y_scale(1) - y_scale(0)) / 2) + 1; })
+                .text(function (d) { return d.country; })
+                .style('text-anchor', 'end');
+
+            svg.selectAll('my_case')
+                .data(group, function (d) { return d.country; })
+                .enter()
+                .append('text')
+                .attr('class', 'case')
+                .attr('x', function (d) { return x_scale(d.total_case) + gap; })
+                .attr('y', function (d) { return y_scale(d.rank) + gap + ((y_scale(1) - y_scale(0)) / 2) + 1; })
+                .text(function (d) { return d3.format(',')(d.total_case); });
+
+
+
+            // Loop
+            var transit = d3.interval(function () {
+                // Update data
+                group = data.filter(function (d) { return d.date == date; })
+                    .sort(function (a, b) {
+                        return d3.descending(a.total_case, b.total_case);
+                    })
+                    .slice(0, num);
+
+                // Update x scale
+                x_scale.domain([0, d3.max(group, function (d) { return d.total_case; })]);
+
+
+                // Update svg
+                svg.select('.x_axis')
+                    .transition()
+                    .duration(transit_time)
+                    .ease(d3.easeLinear)
+                    .call(x_axis);
+
+                // Update bar
+                var rects = svg.selectAll('.bar').data(group, function (d) { return d.country; });
+
+                rects
+                    .enter()
+                    .append('rect')
+                    .attr('class', function (d) { return `bar ${d.country.replace(/\s/g, '_')}`; })
+                    .attr('x', x_scale(0) + 1)
+                    .attr('y', function (d) { return y_scale(num + 1) + gap; })
+                    .attr('width', function (d) { return x_scale(d.total_case) - x_scale(0); })
+                    .attr('height', size)
+                    .style('fill', function (d) { return color(d.Continent); })
+                    .transition()
+                    .duration(transit_time)
+                    .ease(d3.easeLinear)
+                    .attr('y', function (d) { return y_scale(d.rank) + gap; });
+
+                rects
+                    .transition()
+                    .duration(transit_time)
+                    .ease(d3.easeLinear)
+                    .attr('y', function (d) { return y_scale(d.rank) + gap; })
+                    .attr('width', function (d) { return x_scale(d.total_case) - x_scale(0); });
+
+                rects
+                    .exit()
+                    .transition()
+                    .duration(transit_time)
+                    .ease(d3.easeLinear)
+                    .attr('y', function (d) { return y_scale(num + 1) + gap; })
+                    .attr('width', function (d) { return x_scale(d.total_case) - x_scale(0); })
+                    .remove();
+
+                // Update country list
+                var countries = svg.selectAll('.country')
+                    .data(group, function (d) { return d.country; });
+
+                countries
+                    .enter()
+                    .append('text')
+                    .attr('class', 'country')
+                    .attr('x', margin.left - 5)
+                    .attr('y', function (d) { return y_scale(num + 1) + gap + ((y_scale(1) - y_scale(0)) / 2); })
+                    .text(function (d) { return d.country; })
+                    .style('text-anchor', 'end')
+                    .transition()
+                    .duration(transit_time)
+                    .ease(d3.easeLinear)
+                    .attr('y', function (d) { return y_scale(d.rank) + gap + ((y_scale(1) - y_scale(0)) / 2) + 1; });
+
+                countries
+                    .transition()
+                    .duration(transit_time)
+                    .ease(d3.easeLinear)
+                    .attr('x', margin.left - 5)
+                    .attr('y', function (d) { return y_scale(d.rank) + gap + ((y_scale(1) - y_scale(0)) / 2) + 1; });
+
+                countries
+                    .exit()
+                    .transition()
+                    .duration(transit_time)
+                    .ease(d3.easeLinear)
+                    .attr('x', margin.left - 5)
+                    .attr('y', function (d) { return y_scale(num + 1) + gap; })
+                    .remove();
+
+                // Update case number
+                var cases = svg.selectAll('.case').data(group, function (d) { return d.country; });
+
+                cases
+                    .enter()
+                    .append('text')
+                    .attr('class', 'case')
+                    .attr('x', function (d) { return x_scale(d.total_case) + gap; })
+                    .attr('y', function (d) { return y_scale(num + 1) + gap; })
+                    .text(function (d) { return d3.format(',')(d.total_case); })
+                    .transition()
+                    .duration(transit_time)
+                    .ease(d3.easeLinear)
+                    .attr('y', function (d) { return y_scale(d.rank) + gap + ((y_scale(1) - y_scale(0)) / 2) + 1; });
+
+                cases
+                    .transition()
+                    .duration(transit_time)
+                    .ease(d3.easeLinear)
+                    .attr('x', function (d) { return x_scale(d.total_case) + gap; })
+                    .attr('y', function (d) { return y_scale(d.rank) + gap + ((y_scale(1) - y_scale(0)) / 2) + 1; })
+                    .tween("text", function (d) {
+                        var m = d3.interpolateRound(d.total_case, d.total_case);
+                        return function (t) {
+                            this.textContent = d3.format(',')(m(t));
+                        };
+                    });
+
+                cases
+                    .exit()
+                    .transition()
+                    .duration(transit_time)
+                    .ease(d3.easeLinear)
+                    .attr('x', function (d) { return x_scale(d.total_case) + gap; })
+                    .attr('y', function (d) { return y_scale(num + 1) + gap; })
+                    .remove();
+
+                // Print date
+                date_label.text(date);
+
+                // End loop or update index
+                if (index == dateSize - 1) transit.stop();
+                index += 1;
+                date = allDates[index];
+
+            },
+                transit_time);
+
+        });
+
+    </script>
+</body>

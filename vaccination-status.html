@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!-- Load js -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+    <style>
+        body {
+            background-image: url('./picture/background-vaccine.jpeg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            background-color: rgba(255, 255, 255, 0.9);
+            background-blend-mode: lighten;
+        }
+
+        .box {
+            float: left;
+            width: 50%;
+            height: 600px;
+            padding: 20px;
+        }
+
+        nav {
+            font-size: 20px;
+        }
+
+        .navbar-brand {
+            font-size: 20px;
+        }
+
+        h3 {
+            margin-left: 20px;
+        }
+
+        /* set the tooltip */
+        .tooltip {
+            position: absolute;
+            text-align: left;
+            padding: 2px;
+            font: 11px sans-serif;
+            background: #f7f7f7;
+            border: solid;
+            border-width: 1px;
+            border-radius: 8px;
+        }
+
+        .label {
+            font: 10px sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation-->
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <!--             <div class="navbar-header">
+                <a class="navbar-brand">COVID-19 Information</a>
+            </div> -->
+            <ul class="nav navbar-nav">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="covid-cases-envolving.html">How Are COVID-19 Cases Envolving Across the World?</a></li>
+                <li><a href="covid-cases.html">Daily Confirmed Cases Per Country</a></li>
+                <li class="active"><a href="vaccination-status.html">Newly Vaccinated Population Per Country</a></li>
+                <li><a href="scatterplot-cases-to-vaccination.html">Is Vaccine Helping?</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <h3>
+        How does current situation look like for each country/region in terms of fully vaccinated population?
+    </h3>
+
+    <!-- Create a div where the graph will take place -->
+
+    <div class="box" id="my_dataviz1">
+        <h4>Newly Vaccinated Population Per Country/Region</h4>
+        <p>
+            This scatterplot shows the relationship between <b>daily new cases</b> and <b>total population</b> for each
+            country/region in the world.
+        <ul>
+            <li>
+                The <b>color</b> and <b>size</b> of each bubble indicates <b>fully vaccinated ratio</b>. The larger
+                the ratio, the larger and darker the bubble.
+            </li>
+            <li>
+                If you move the mouse to any bubble, more statistics are shown for the corresponding country/region.
+            </li>
+            <li>
+                The chart is filtered on <b>date</b>. You may use the drop-down box to select any date you would like
+                and see how many additional people are becoming fully vaccinated for each country/region starting from
+                December 29, 2020.
+            </li>
+        </ul>
+        </p>
+    </div>
+
+    <div class="box" id="my_dataviz2">
+        <h4>Fully Vaccinated Population for Top-20 Countries/Regions</h4>
+        <p>
+            This bar chart shows the top 20 countries/regions with the largest <b>fully vaccinatied population</b> as of
+            date <u>July 17, 2021</u>.
+        <ul>
+            <li>
+                The <b>color</b> of each bar indicates <b>fully vaccinated ratio</b>, which corresponds to the color
+                in the bubble chart on the left. The larger the ratio, the darker the color.
+            </li>
+            <li>
+                If you move the mouse to any bar, the specific <b>fully vaccinated ratio</b> will be shown for the
+                corresponding country/region.
+            </li>
+        </ul>
+
+        </p>
+        <br>
+        <h5> As of date July 17, 2021: </h5>
+    </div>
+
+
+    <script>
+        // set the dimensions and margins of the graph
+        var margin = { top: 60, right: 60, bottom: 60, left: 60 },
+            width = 600 - margin.left - margin.right,
+            height = 600 - margin.top - margin.bottom;
+
+
+        // append select button
+        var select1 = d3
+            .select('#my_dataviz1')
+            .append('div')
+            .append('select');
+
+        // append the svg object to the body of the page
+        var svg1 = d3.select('#my_dataviz1')
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+
+        //Read the data
+        d3.csv("./data/covid_data_processed.csv").then(function (data) {
+            // set date parse
+            var parseDate = d3.timeParse("%m/%d/%y");
+            var formatDate = d3.timeFormat("%B %d, %Y");
+
+            data.forEach(function (d) {
+                d.date = formatDate(parseDate(d['date']));
+                d.country = d['Country/Region'];
+                d.population = +d.population;
+                d.total_confirmed = +d.confirmed_so_far;
+                d.new_cases = +d.new_cases;
+                d.total_deaths = +d.death_so_far;
+                d.total_recovered = +d.recovered_so_far;
+                d.fully_vaccinated = +d.fully_vaccinated_so_far;
+                d.newly_vaccinated = +d.newly_vaccinated;
+                d.seven_day_average = +d['7_day_average'];
+            });
+
+            console.log(data);
+
+            data = data.filter(function (d) { return d.newly_vaccinated > 0 })
+
+            // list of dates
+            var allDates = d3.set(data.map(function (d) { return d.date; })).values();
+            var dateSize = d3.set(data.map(function (d) { return d.date; })).size();
+
+
+            // add the options to the button
+            select1.selectAll('option')
+                .data(allDates)
+                .enter()
+                .append('option')
+                .text(function (d) { return d; }) // text showed in the menu
+                .attr("value", function (d) { return d; }) // corresponding value returned by the button
+
+            // set default selected date
+            select1.property('value', allDates[dateSize - 1]);
+
+            // Set the tooltip
+            var tooltip1 = d3.select('#my_dataviz1').append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+
+            // set tooltip functions
+            function mouseover1(d) {
+                var html = "<b> Country/Region: </b>" + d.country + "<br/>" +
+                    "<b> Newly Vaccinated: </b>" + d3.format(",")(d.newly_vaccinated) + "<br/>" +
+                    "<b> Population as of 2018: </b>" + d3.format(",")(d.population) + "<br/>" +
+                    "<b> Fully Vaccinated Ratio: </b>" + d3.format(",.4f")(d.fully_vaccinated / d.population);
+
+                tooltip1.html(html)
+                    .style("left", (d3.event.pageX + 15) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px")
+                    .transition()
+                    .duration(200)
+                    .style("opacity", .9);
+            };
+
+            // tooltip mouseout event handler
+            function mouseout1(d) {
+                tooltip1.transition()
+                    .duration(200)
+                    .style("opacity", 0);
+            };
+
+
+            // Add X axis
+            var x_scale1 = d3.scaleSymlog()
+                .domain([20000, 1400000000])
+                .range([0, width]);
+            //    .base(10);
+
+            var x_axis1 = d3.axisBottom(x_scale1)
+                .tickValues([20000, 100000, 1000000, 10000000, 100000000, 1000000000]);
+
+            svg1.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(x_axis1);
+
+            // Add Y axis
+            var y_scale1 = d3.scaleSymlog()
+                .domain([10, 3000000])
+                .range([height, 0]);
+            //    .base(10);
+
+            var y_axis1 = d3.axisLeft(y_scale1)
+                .tickValues([0, 10, 100, 1000, 10000, 100000, 1000000, 3000000]);
+
+            svg1.append("g")
+                .call(y_axis1);
+
+            // Add a scale for bubble size
+            var r1 = d3.scaleLinear()
+                .domain([0, 1])
+                .range([1, 40]);
+
+            // Add a scale for color
+            var myColor1 = d3.scaleSequential(d3.interpolateGreens)
+                .domain([0, 0.9])
+                .clamp(true);
+
+            // Add X axis label
+            svg1.append("text")
+                .attr("x", width + 60)
+                .attr("y", height - 20)
+                .text("Full Population")
+                .attr("text-anchor", "end");
+
+            // Add Y axis label
+            svg1.append("text")
+                .attr("y", - 20)
+                .attr("x", - 20)
+                .text("Newly Vaccinated Population")
+                .attr("text-anchor", "start");
+
+            // Filter data on selected date
+            var selectedData1 = data.filter(function (d) { return d.date == allDates[dateSize - 1] })
+
+            // Add dots
+            var points1 = svg1.append('g')
+                .selectAll('dot')
+                .data(selectedData1)
+                .enter()
+                .append('circle')
+                .attr("cx", function (d) { return x_scale1(d.population); })
+                .attr("cy", function (d) { return y_scale1(d.newly_vaccinated); })
+                .attr("r", function (d) { return r1(d.fully_vaccinated / d.population); })
+                .style("fill", function (d) { return myColor1(d.fully_vaccinated / d.population); })
+                .style("stroke", 'black')
+                .style('opacity', .7)
+                .on("mouseover", mouseover1)
+                .on("mouseout", mouseout1);
+
+
+            // Update dots given selected date
+            d3.select("#my_dataviz1").on("change", function (d) {
+                points1.remove();
+                var date = select1.property('value');
+                var selectedData1 = data.filter(function (d) { return d.date == date })
+
+                // Add dots
+                points1 = svg1.append('g')
+                    .selectAll('dot')
+                    .data(selectedData1)
+                    .enter()
+                    .append('circle')
+                    .attr("cx", function (d) { return x_scale1(d.population); })
+                    .attr("cy", function (d) { return y_scale1(d.newly_vaccinated); })
+                    .attr("r", function (d) { return r1(d.fully_vaccinated / d.population); })
+                    .style("fill", function (d) { return myColor1(d.fully_vaccinated / d.population); })
+                    .style("stroke", 'black')
+                    .style('opacity', .7)
+                    .on("mouseover", mouseover1)
+                    .on("mouseout", mouseout1);
+
+
+            })
+
+        })
+
+    </script>
+
+    <script>
+        // set the dimensions and margins of the graph
+        var margin = { top: 40, right: 60, bottom: 60, left: 100 },
+            width = 600 - margin.left - margin.right,
+            height = 600 - margin.top - margin.bottom,
+            gap = 5,
+            num = 20;
+
+        // append the svg object to the body of the page
+        var svg2 = d3.select('#my_dataviz2')
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+
+        //Read the data
+        d3.csv("./data/covid_data_processed.csv").then(function (data) {
+            // set date parse
+            var parseDate = d3.timeParse("%m/%d/%y");
+            var formatDate = d3.timeFormat("%B %d, %Y");
+
+            data.forEach(function (d) {
+                d.date = formatDate(parseDate(d['date']));
+                d.country = d['Country/Region'];
+                d.population = +d.population;
+                d.total_confirmed = +d.total_confirmed;
+                d.new_cases = +d.new_cases;
+                d.total_deaths = +d.total_deaths;
+                d.total_recovered = +d.total_recovered;
+                d.partially_vaccinated = +d.People_Partially_Vaccinated;
+                d.fully_vaccinated = +d.People_Fully_Vaccinated;
+                d.newly_vaccinated = +d.newly_vaccinated;
+            });
+
+            data = data.filter(function (d) { return d.date == formatDate(parseDate("7/17/21")) })
+
+            data = data.sort(function (a, b) {
+                return d3.ascending(a.fully_vaccinated, b.fully_vaccinated);
+            })
+            console.log(data);
+
+            var topData = data.sort(function (a, b) {
+                return d3.descending(a.fully_vaccinated, b.fully_vaccinated);
+            })
+                .slice(0, num)
+                .sort(function (a, b) {
+                    return d3.ascending(a.fully_vaccinated, b.fully_vaccinated);
+                });
+
+            // Set the tooltip
+            var tooltip2 = d3.select('#my_dataviz2').append("div")
+                .attr("class", "tooltip")
+                .style("opacity", 0);
+
+            // set tooltip functions
+            function mouseover2(d) {
+                var html = "<b>" + d.country + ": </b>" + "<br/>" +
+                    //"Fully Vaccinated Population: " + d3.format(",")(d.fully_vaccinated) + "<br/>" +
+                    "Fully Vaccinated Ratio: " + d3.format(",.4f")(d.fully_vaccinated / d.population);
+
+                tooltip2.html(html)
+                    .style("left", (d3.event.pageX + 15) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px")
+                    .transition()
+                    .duration(200)
+                    .style("opacity", .9);
+            };
+
+            // tooltip mouseout event handler
+            function mouseout2(d) {
+                tooltip2.transition()
+                    .duration(200)
+                    .style("opacity", 0);
+            };
+
+            // Add X axis
+            var x_scale2 = d3.scaleLinear()
+                .domain([0, 250000000])
+                .range([1, width]);
+
+            var x_axis2 = d3.axisBottom(x_scale2)
+                .tickValues([10000000, 50000000, 100000000, 150000000, 200000000, 250000000]);
+
+            svg2.append("g")
+                .attr("transform", "translate(0," + height + ")")
+                .call(x_axis2);
+
+
+            // Add Y axis
+            var y = d3.scaleBand()
+                .range([height, 0])
+                .domain(topData.map(function (d) { return d.country; }))
+                .padding(.1);
+
+            svg2.append("g")
+                .call(d3.axisLeft(y));
+
+            // Add X axis label
+            svg2.append("text")
+                .attr("text-anchor", "end")
+                .attr("x", width + 60)
+                .attr("y", height - 20)
+                .text("Fully Vaccinated Population");
+
+            // Add Y axis label
+            svg2.append("text")
+                .attr("text-anchor", "end")
+                .attr("y", -20)
+                .attr("x", 20)
+                .text("Country/Region")
+
+
+            // Add a scale for color
+            var myColor2 = d3.scaleSequential(d3.interpolateGreens)
+                .domain([0, 0.9])
+                .clamp(true);
+
+
+            //Add bars
+            svg2.selectAll("bar")
+                .data(topData)
+                .enter()
+                .append("rect")
+                .attr("x", x_scale2(0))
+                .attr("y", function (d) { return y(d.country); })
+                .attr("width", function (d) { return x_scale2(d.fully_vaccinated); })
+                .attr("height", y.bandwidth())
+                .attr("fill", function (d) { return myColor2(d.fully_vaccinated / d.population); })
+                .style("stroke", 'black')
+                .style('opacity', .7)
+                .on("mouseover", mouseover2)
+                .on("mouseout", mouseout2);
+
+            svg2.selectAll(".text")
+                .data(topData)
+                .enter()
+                .append("text")
+                .attr("class", "label")
+                .attr("x", function (d) { return x_scale2(d.fully_vaccinated) + 10; })
+                .attr("y", function (d) { return y(d.country) + 15; })
+                .text(function (d) { return d3.format(",")(d.fully_vaccinated); });
+
+
+        })
+
+
+    </script>
+
+</body>
