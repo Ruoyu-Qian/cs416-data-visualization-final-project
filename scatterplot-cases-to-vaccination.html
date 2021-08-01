@@ -9,6 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
 
     <style>
         body {
@@ -167,8 +168,8 @@
 
     <script>
         // set the dimensions and margins of the graph
-        var margin = { top: 60, right: 60, bottom: 60, left: 60 },
-            width = 600 - margin.left - margin.right,
+        var margin = { top: 50, right: 200, bottom: 60, left: 60 },
+            width = 750 - margin.left - margin.right,
             height = 600 - margin.top - margin.bottom;
 
 
@@ -282,12 +283,30 @@
 
             // Add a scale for bubble size
             var r = d3.scaleLinear()
-                .domain([0, 0.2])
+                .domain([0, 0.18])
                 .range([1, 40]);
 
             // Add a scale for color
             var myColor = d3.scaleLinear().domain([0, 0.18])
                 .range(["white", "red"])
+
+            // Add legend
+            svg.append("g")
+                .attr("class", "legendLinear")
+                //.style("stroke", 'black')
+                .attr("transform", "translate(550,0)");
+
+            var legendLinear = d3.legendColor()
+                .title("Case/Population Ratio")
+                .titleWidth("40px")
+                .labelFormat(d3.format(".2f"))
+                .cells(10)
+                //.orient('horizontal')
+                .shape('circle')
+                .scale(myColor);
+
+            svg.select(".legendLinear")
+                .call(legendLinear);
 
 
             // Filter data on selected date
@@ -312,7 +331,7 @@
 
             // Add X axis label
             svg.append("text")
-                .attr("x", width + 60)
+                .attr("x", width + 100)
                 .attr("y", height - 20)
                 .text("Fully Vaccinated Ratio")
                 .attr("text-anchor", "end");
