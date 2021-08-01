@@ -21,6 +21,13 @@
             background-blend-mode: lighten;
         }
 
+        .pager {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 16px;
+        }
+
         nav {
             font-size: 20px;
         }
@@ -62,17 +69,22 @@
 <body>
     <!-- Navigation-->
     <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <!--             <div class="navbar-header">
-                <a class="navbar-brand" href="#">COVID-19 Information</a>
-            </div> -->
+<!--         <div class="container-fluid">
             <ul class="nav navbar-nav">
                 <li><a href="index.html">Home</a></li>
-                <li class="active"><a href="covid-cases-evolving.html">How Are COVID-19 Cases Evolving Across the World?</a></li>
+                <li class="active"><a href="covid-cases-evolving.html">How Are COVID-19 Cases Evolving Across the
+                        World?</a></li>
                 <li><a href="covid-cases.html">Daily Confirmed Cases Per Country</a></li>
                 <li><a href="vaccination-status.html">Newly Vaccinated Population Per Country</a></li>
                 <li><a href="scatterplot-cases-to-vaccination.html">Is Vaccine Helping?</a></li>
             </ul>
+        </div> -->
+        <div class="container-fluid">
+            <p class="navbar-text">Home</p>
+            <p class="navbar-text" style="color: #ffff">How Are COVID-19 Cases Evolving Across the World?</p>
+            <p class="navbar-text">Daily Confirmed Cases Per Country</p>
+            <p class="navbar-text">Newly Vaccinated Population Per Country</p>
+            <p class="navbar-text">Is Vaccine Helping?</p>
         </div>
     </nav>
 
@@ -385,4 +397,10 @@
         });
 
     </script>
+
+    <ul class="pager">
+        <li><a href="index.html">Previous</a></li>
+        <li><a href="covid-cases.html">Next</a></li>
+    </ul>
+
 </body>

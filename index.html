@@ -19,6 +19,13 @@
             background-blend-mode: lighten;
         }
 
+        .pager {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 16px;
+        }
+
         h3 {
             margin-left: 20px;
         }
@@ -28,36 +35,42 @@
             margin-right: 20px;
         }
 
-        nav {
-            font-size: 20px;
+        .fix {
+            position: fixed;
+            bottom: 40px;
+            right: 20px;
         }
 
-        .navbar-brand {
+        nav {
             font-size: 20px;
         }
 
         div.note {
             margin-left: 20px;
-            position: absolute;
-            bottom: 5px;
+            position: fixed;
+            bottom: 40px;
         }
     </style>
 </head>
 
 <body>
+
     <!-- Navigation-->
     <nav class="navbar navbar-inverse">
         <div class="container-fluid">
-            <!--             <div class="navbar-header">
-                <a class="navbar-brand" href="#">COVID-19 Information</a>
-            </div> -->
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="index.html">Home</a></li>
-                <li><a href="covid-cases-evolving.html">How Are COVID-19 Cases Evolving Across the World?</a></li>
+            <p class="navbar-text" style="color: #ffff">Home</p>
+            <p class="navbar-text">How Are COVID-19 Cases Evolving Across the World?</p>
+            <p class="navbar-text">Daily Confirmed Cases Per Country</p>
+            <p class="navbar-text">Newly Vaccinated Population Per Country</p>
+            <p class="navbar-text">Is Vaccine Helping?</p>
+
+<!--             <ul class="nav navbar-nav">
+                <li class="active"><a>Home</a></li>
+                <li><a>How Are COVID-19 Cases Evolving Across the World?</a></li>
                 <li><a href="covid-cases.html">Daily Confirmed Cases Per Country</a></li>
                 <li><a href="vaccination-status.html">Newly Vaccinated Population Per Country</a></li>
                 <li><a href="scatterplot-cases-to-vaccination.html">Is Vaccine Helping?</a></li>
-            </ul>
+            </ul> -->
         </div>
     </nav>
 
@@ -90,21 +103,28 @@
             different countries/regions in the world and how the vaccination distribution looks like for each
             country/region. <br>
             <br>
-            User may use the navigation bar on the top to explore the content in each page. From left to right, 
-            each page covers the correponding content: 
-            <ul>
-                <li>How Are COVID-19 Cases Evolving Across the World?</a></li>
-                <li>Daily Confirmed Cases Per Country</a></li>
-                <li>Newly Vaccinated Population Per Country</a></li>
-                <li>Is Vaccine Helping?</a></li>
-            </ul>
+            User may use the navigation bar on the top to explore the content in each page. From left to right,
+            each page covers the correponding content:
+        <ul>
+            <li>How Are COVID-19 Cases Evolving Across the World?</li>
+            <li>Daily Confirmed Cases Per Country</li>
+            <li>Newly Vaccinated Population Per Country</li>
+            <li>Is Vaccine Helping?</li>
+        </ul>
         </p>
+
+        <!--         <img src="./picture/covid.png" class='fix' alt="vaccine" width="600px">
+ -->
+        <ul class="pager">
+            <li><a href="covid-cases-evolving.html">Next</a></li>
+        </ul>
+
 
         <div class='note'>
             <b>Resources</b>:
             <ul>
                 <li>
-                    <a href="https://en.wikipedia.org/wiki/COVID-19">https://en.wikipedia.org/wiki/COVID-19</a>
+                    <a href="https://en.wikipedia.org/wiki/COVID-19">https://en.wikipedia.org/wiki/COVID-19<a />
                 </li>
                 <li>
                     <a

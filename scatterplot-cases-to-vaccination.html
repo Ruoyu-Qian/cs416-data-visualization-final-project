@@ -21,6 +21,13 @@
             background-blend-mode: lighten;
         }
 
+        .pager {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 16px;
+        }
+
         .box {
             float: left;
             width: 50%;
@@ -29,9 +36,9 @@
         }
 
         .fix {
-            position:fixed;
+            position: fixed;
             float: right;
-            bottom: 20px;
+            bottom: 40px;
             right: 20px;
         }
 
@@ -72,10 +79,7 @@
 <body>
     <!-- Navigation-->
     <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
-            <!--             <div class="navbar-header">
-                <a class="navbar-brand" href="#">COVID-19 Information</a>
-            </div> -->
+<!--         <div class="container-fluid">
             <ul class="nav navbar-nav">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="covid-cases-evolving.html">How Are COVID-19 Cases Evolving Across the World?</a></li>
@@ -83,6 +87,13 @@
                 <li><a href="vaccination-status.html">Newly Vaccinated Population Per Country</a></li>
                 <li class="active"><a href="scatterplot-cases-to-vaccination.html">Is Vaccine Helping?</a></li>
             </ul>
+        </div> -->
+        <div class="container-fluid">
+            <p class="navbar-text">Home</p>
+            <p class="navbar-text">How Are COVID-19 Cases Evolving Across the World?</p>
+            <p class="navbar-text">Daily Confirmed Cases Per Country</p>
+            <p class="navbar-text">Newly Vaccinated Population Per Country</p>
+            <p class="navbar-text" style="color: #ffff">Is Vaccine Helping?</p>
         </div>
     </nav>
 
@@ -151,7 +162,7 @@
             </li>
         </ol>
         </p>
-        <img src="./picture/vaccine.png" class = 'fix' alt="vaccine" width="250px">
+        <img src="./picture/vaccine.png" class='fix' alt="vaccine" width="250px">
 
     </div>
 
@@ -349,6 +360,12 @@
         })
 
     </script>
+
+    <ul class="pager">
+        <li><a href="vaccination-status.html">Previous</a></li>
+    </ul>
+
+
 </body>
 
 </html>
