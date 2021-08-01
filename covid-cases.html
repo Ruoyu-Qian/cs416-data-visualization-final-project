@@ -9,6 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
 
     <style>
         body {
@@ -73,7 +74,7 @@
 <body>
     <!-- Navigation-->
     <nav class="navbar navbar-inverse">
-<!--         <div class="container-fluid">
+        <!--         <div class="container-fluid">
             <ul class="nav navbar-nav">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="covid-cases-evolving.html">How Are COVID-19 Cases Evolving Across the World?</a></li>
@@ -143,8 +144,8 @@
 
     <script>
         // set the dimensions and margins of the graph
-        var margin = { top: 50, right: 60, bottom: 60, left: 60 },
-            width = 600 - margin.left - margin.right,
+        var margin = { top: 50, right: 200, bottom: 60, left: 60 },
+            width = 750 - margin.left - margin.right,
             height = 600 - margin.top - margin.bottom;
 
 
@@ -258,17 +259,30 @@
 
             // Add a scale for bubble size
             var r1 = d3.scaleLinear()
-                .domain([0, 0.2])
+                .domain([0, 0.18])
                 .range([1, 40]);
 
-            // Add a scale for color
-/*             var myColor1 = d3.scaleSequential(d3.interpolateReds)
-                .domain([0, 0.18])
-                .clamp(true); */
-            
+
             var myColor1 = d3.scaleLinear().domain([0, 0.18])
                 .range(["white", "red"])
 
+            // Add legend
+            svg1.append("g")
+                .attr("class", "legendLinear")
+                //.style("stroke", 'black')
+                .attr("transform", "translate(550,0)");
+
+            var legendLinear = d3.legendColor()
+                .title("Case/Population Ratio")
+                .titleWidth("40px")
+                .labelFormat(d3.format(".2f"))
+                .cells(10)
+                //.orient('horizontal')
+                .shape('circle')
+                .scale(myColor1);
+
+            svg1.select(".legendLinear")
+                .call(legendLinear);
 
             // Add X axis label
             svg1.append("text")
@@ -333,8 +347,8 @@
 
     <script>
         // set the dimensions and margins of the graph
-        var margin = { top: 40, right: 60, bottom: 60, left: 100 },
-            width = 600 - margin.left - margin.right,
+        var margin = { top: 40, right: 200, bottom: 60, left: 100 },
+            width = 800 - margin.left - margin.right,
             height = 600 - margin.top - margin.bottom,
             gap = 5,
             num = 20;
@@ -450,6 +464,23 @@
             var myColor2 = d3.scaleLinear().domain([0, 0.18])
                 .range(["white", "red"])
 
+            // Add legend
+            svg2.append("g")
+                .attr("class", "legendLinear")
+                //.style("stroke", 'black')
+                .attr("transform", "translate(550,0)");
+
+            var legendLinear = d3.legendColor()
+                .title("Case/Population Ratio")
+                .titleWidth("40px")
+                .labelFormat(d3.format(".2f"))
+                .cells(10)
+                //.orient('horizontal')
+                //.shape('circle')
+                .scale(myColor2);
+
+            svg2.select(".legendLinear")
+                .call(legendLinear);
 
             //Add bars
             svg2.selectAll("bar")

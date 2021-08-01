@@ -9,6 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
 
     <style>
         body {
@@ -138,8 +139,8 @@
 
     <script>
         // set the dimensions and margins of the graph
-        var margin = { top: 60, right: 60, bottom: 60, left: 60 },
-            width = 600 - margin.left - margin.right,
+        var margin = { top: 50, right: 200, bottom: 60, left: 60 },
+            width = 750 - margin.left - margin.right,
             height = 600 - margin.top - margin.bottom;
 
 
@@ -257,12 +258,26 @@
                 .range([1, 40]);
 
             // Add a scale for color
-/*             var myColor1 = d3.scaleSequential(['#edf8e9', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#005a32'])
-                .domain([0, 0.9])
-                .clamp(true); */
-
             var myColor1 = d3.scaleLinear().domain([0, 0.9])
                 .range(["white", "green"])
+
+            // Add legend
+            svg1.append("g")
+                .attr("class", "legendLinear")
+                //.style("stroke", 'black')
+                .attr("transform", "translate(550,0)");
+
+            var legendLinear = d3.legendColor()
+                .title("Fully Vaccinated Ratio")
+                .titleWidth("40px")
+                .labelFormat(d3.format(".1f"))
+                .cells(10)
+                //.orient('horizontal')
+                .shape('circle')
+                .scale(myColor1);
+
+            svg1.select(".legendLinear")
+                .call(legendLinear);
 
             // Add X axis label
             svg1.append("text")
@@ -327,8 +342,8 @@
 
     <script>
         // set the dimensions and margins of the graph
-        var margin = { top: 40, right: 60, bottom: 60, left: 100 },
-            width = 600 - margin.left - margin.right,
+        var margin = { top: 40, right: 200, bottom: 60, left: 100 },
+            width = 800 - margin.left - margin.right,
             height = 600 - margin.top - margin.bottom,
             gap = 5,
             num = 20;
@@ -444,6 +459,23 @@
             var myColor2 = d3.scaleLinear().domain([0, 0.9])
                 .range(["white", "green"])
 
+            // Add legend
+            svg2.append("g")
+                .attr("class", "legendLinear")
+                //.style("stroke", 'black')
+                .attr("transform", "translate(550,0)");
+
+            var legendLinear = d3.legendColor()
+                .title("Fully Vaccinated Ratio")
+                .titleWidth("40px")
+                .labelFormat(d3.format(".1f"))
+                .cells(10)
+                //.orient('horizontal')
+                //.shape('circle')
+                .scale(myColor2);
+
+            svg2.select(".legendLinear")
+                .call(legendLinear);
 
             //Add bars
             svg2.selectAll("bar")
