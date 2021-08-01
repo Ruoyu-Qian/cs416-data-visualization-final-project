@@ -9,7 +9,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 
     <style>
         body {
@@ -69,7 +68,7 @@
 
     <!-- Navigation-->
     <nav class="navbar navbar-inverse">
-<!--         <div class="container-fluid">
+        <!--         <div class="container-fluid">
             <ul class="nav navbar-nav">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="covid-cases-evolving.html">How Are COVID-19 Cases Evolving Across the World?</a></li>
@@ -258,9 +257,12 @@
                 .range([1, 40]);
 
             // Add a scale for color
-            var myColor1 = d3.scaleSequential(d3.interpolateGreens)
+/*             var myColor1 = d3.scaleSequential(['#edf8e9', '#c7e9c0', '#a1d99b', '#74c476', '#41ab5d', '#238b45', '#005a32'])
                 .domain([0, 0.9])
-                .clamp(true);
+                .clamp(true); */
+
+            var myColor1 = d3.scaleLinear().domain([0, 0.9])
+                .range(["white", "green"])
 
             // Add X axis label
             svg1.append("text")
@@ -439,9 +441,8 @@
 
 
             // Add a scale for color
-            var myColor2 = d3.scaleSequential(d3.interpolateGreens)
-                .domain([0, 0.9])
-                .clamp(true);
+            var myColor2 = d3.scaleLinear().domain([0, 0.9])
+                .range(["white", "green"])
 
 
             //Add bars

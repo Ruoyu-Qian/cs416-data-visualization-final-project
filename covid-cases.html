@@ -9,7 +9,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 
     <style>
         body {
@@ -263,9 +262,12 @@
                 .range([1, 40]);
 
             // Add a scale for color
-            var myColor1 = d3.scaleSequential(d3.interpolateReds)
+/*             var myColor1 = d3.scaleSequential(d3.interpolateReds)
                 .domain([0, 0.18])
-                .clamp(true);
+                .clamp(true); */
+            
+            var myColor1 = d3.scaleLinear().domain([0, 0.18])
+                .range(["white", "red"])
 
 
             // Add X axis label
@@ -445,9 +447,8 @@
 
 
             // Add a scale for color
-            var myColor2 = d3.scaleSequential(d3.interpolateReds)
-                .domain([0, 0.18])
-                .clamp(true);
+            var myColor2 = d3.scaleLinear().domain([0, 0.18])
+                .range(["white", "red"])
 
 
             //Add bars
