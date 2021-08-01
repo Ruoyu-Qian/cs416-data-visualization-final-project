@@ -262,7 +262,7 @@
                 .domain([0, 0.18])
                 .range([1, 40]);
 
-
+            // Add a scale for color
             var myColor1 = d3.scaleLinear().domain([0, 0.18])
                 .range(["white", "red"])
 
@@ -286,7 +286,7 @@
 
             // Add X axis label
             svg1.append("text")
-                .attr("x", width + 60)
+                .attr("x", width + 100)
                 .attr("y", height - 20)
                 .text("Full Population")
                 .attr("text-anchor", "end");
@@ -448,7 +448,7 @@
             // Add X axis label
             svg2.append("text")
                 .attr("text-anchor", "end")
-                .attr("x", width + 60)
+                .attr("x", width + 100)
                 .attr("y", height - 20)
                 .text("Total Confirmed Cases");
 

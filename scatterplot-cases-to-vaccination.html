@@ -73,6 +73,10 @@
             border-width: 1px;
             border-radius: 8px;
         }
+
+        .label {
+            font: 10px sans-serif;
+        }
     </style>
 </head>
 
@@ -286,6 +290,7 @@
                 .domain([0, 0.18])
                 .range([1, 40]);
 
+
             // Add a scale for color
             var myColor = d3.scaleLinear().domain([0, 0.18])
                 .range(["white", "red"])
@@ -293,7 +298,6 @@
             // Add legend
             svg.append("g")
                 .attr("class", "legendLinear")
-                //.style("stroke", 'black')
                 .attr("transform", "translate(550,0)");
 
             var legendLinear = d3.legendColor()
@@ -301,7 +305,6 @@
                 .titleWidth("40px")
                 .labelFormat(d3.format(".2f"))
                 .cells(10)
-                //.orient('horizontal')
                 .shape('circle')
                 .scale(myColor);
 
