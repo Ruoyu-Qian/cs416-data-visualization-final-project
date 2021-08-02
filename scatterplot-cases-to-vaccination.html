@@ -10,6 +10,8 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+    <script src="https://rawgit.com/susielu/d3-annotation/master/d3-annotation.min.js"></script>
+
 
     <style>
         body {
@@ -83,7 +85,7 @@
 <body>
     <!-- Navigation-->
     <nav class="navbar navbar-inverse">
-<!--         <div class="container-fluid">
+        <!--         <div class="container-fluid">
             <ul class="nav navbar-nav">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="covid-cases-evolving.html">How Are COVID-19 Cases Evolving Across the World?</a></li>
@@ -126,6 +128,7 @@
             </li>
         </ul>
         </p>
+
     </div>
 
     <div class="box" id="my_dataviz2">
@@ -323,8 +326,6 @@
                 .append('circle')
                 .attr("cx", function (d) { return x_scale(d.fully_vaccinated / d.population); })
                 .attr("cy", function (d) { return y_scale(d.seven_day_average / d.population); })
-                //.attr("r", 10)
-                //.attr("fill", "#cccccc")
                 .attr("r", function (d) { return r(d.total_confirmed / d.population); })
                 .style("fill", function (d) { return myColor(d.total_confirmed / d.population); })
                 .style("stroke", 'black')
@@ -347,10 +348,64 @@
                 .attr("text-anchor", "start");
 
 
+            // Features of the annotation
+            var annotations = [
+                {
+                    note: {
+                        label: "Low fully vaccinated ratio; high case ratio",
+                        title: "Fuji",
+                        align: "middle",
+                        wrap: 100
+                    },
+                    x: 50,
+                    y: -17,
+                    dy: 50,
+                    dx: 50
+                },
+
+                {
+                    note: {
+                        label: "High fully vaccinated ratio; low case ratio",
+                        title: "Bahrain",
+                        align: "middle",
+                        wrap: 100
+                    },
+                    x: 440,
+                    y: 460,
+                    dy: -50,
+                    dx: 70
+                }
+
+            ]
+
+            var annotation2 = [
+                {
+                    note: {
+                        label: "High fully vaccinated ratio; high case ratio",
+                        title: "Bahrain",
+                        align: "middle",
+                        wrap: 150
+                    },
+                    x: 440,
+                    y: 50,
+                    dy: -20,
+                    dx: 10
+                }
+            ]
+
+            // Add annotation to the chart
+            var makeAnnotations = d3.annotation()
+                .annotations(annotations)
+
+            my_annotation = svg.append("g")
+                .call(makeAnnotations)
+
+
             // Update dots given selected date
             d3.select("#my_dataviz").on("change", function (d) {
                 points.remove();
-                //svg.selectAll('.circle').remove();
+                my_annotation.remove();
+
                 var date = select.property('value');
                 var selectedData = data.filter(function (d) { return d.date == date });
 
@@ -370,7 +425,26 @@
                     .on("mouseout", mouseout);
 
 
+                if (date == allDates[DateSize - 1]) {
+                    var makeAnnotations = d3.annotation()
+                        .annotations(annotations);
+
+                    my_annotation = svg.append("g")
+                        .call(makeAnnotations);
+                }
+
+                if (date == allDates[DateSize - 2]) {
+                    var makeAnnotations = d3.annotation()
+                        .annotations(annotation2)
+
+                    my_annotation = svg.append("g")
+                        .call(makeAnnotations)
+                }
+
             })
+
+
+
 
         })
 
