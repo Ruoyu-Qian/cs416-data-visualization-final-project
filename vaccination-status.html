@@ -318,7 +318,7 @@
                 {
                     note: {
                         title: "US",
-                        label: "#1 Fully vaccinated population",
+                        label: "#2 Fully vaccinated population",
                         align: "middle",
                         wrap: 100
                     },
@@ -342,7 +342,7 @@
             d3.select("#my_dataviz1").on("change", function (d) {
                 points1.remove();
                 my_annotation.remove();
-                
+
                 var date = select1.property('value');
                 var selectedData1 = data.filter(function (d) { return d.date == date })
 
