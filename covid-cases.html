@@ -10,6 +10,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+    <script src="https://rawgit.com/susielu/d3-annotation/master/d3-annotation.min.js"></script>
 
     <style>
         body {
@@ -316,10 +317,63 @@
                 .on("mouseover", mouseover1)
                 .on("mouseout", mouseout1);
 
+            // Add annotation
+            var annotations = [
+                {
+                    note: {
+                        title: "US",
+                        label: "#1 Total confirmed cases",
+                        align: "middle",
+                        wrap: 100
+                    },
+                    x: 455,
+                    y: 155,
+                    dy: 20,
+                    dx: 20
+                },
+
+                {
+                    note: {
+                        title: "India",
+                        label: "#2 Total confirmed cases",
+                        align: "middle",
+                        wrap: 100
+                    },
+                    x: 500,
+                    y: 90,
+                    dy: -20,
+                    dx: 20
+                },
+
+                {
+                    note: {
+                        title: "Brazil",
+                        label: "#3 Total confirmed cases",
+                        align: "middle",
+                        wrap: 100
+                    },
+                    x: 410,
+                    y: 80,
+                    dy: -20,
+                    dx: -20
+                }
+
+            ]
+
+
+            // Add annotation to the chart
+            var makeAnnotations = d3.annotation()
+                .annotations(annotations)
+
+            my_annotation = svg1.append("g")
+                .call(makeAnnotations)
+
 
             // Update dots given selected date
             d3.select("#my_dataviz1").on("change", function (d) {
                 points1.remove();
+                my_annotation.remove();
+
                 var date = select1.property('value');
                 var selectedData1 = data.filter(function (d) { return d.date == date })
 
@@ -338,6 +392,14 @@
                     .on("mouseover", mouseover1)
                     .on("mouseout", mouseout1);
 
+
+                if (date == allDates[dateSize - 1]) {
+                    var makeAnnotations = d3.annotation()
+                        .annotations(annotations);
+
+                    my_annotation = svg1.append("g")
+                        .call(makeAnnotations);
+                }
 
             })
 
